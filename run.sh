@@ -5,7 +5,7 @@ echo ">>>> cleaning files after previous runs"
 if $(hadoop fs -test -d /user/motor_vehicle_collisions) ; then hadoop fs -rm -f -r /user/motor_vehicle_collisions; fi
 if $(test -d ./output) ; then rm -rf ./output; fi
 if $(test -d ./input) ; then rm -rf ./input; fi
-if $(test -d ./input.zip) ; then rm -f ./input.zip; fi
+if $(test  ./input.zip) ; then rm -f ./input.zip; fi
 
 echo " "
 echo ">>>> Copying zip file with input data from Google Storage"
@@ -25,7 +25,7 @@ hive -f hive_transform.hql
 
 echo " "
 echo ">>>> Downloading result files from HDFS to local environment"
-mkdir -p ./output6
+mkdir -p ./output
 hadoop fs -copyToLocal /user/motor_vehicle_collisions/output/* ./output
 
 echo " "
