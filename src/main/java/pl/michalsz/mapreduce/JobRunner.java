@@ -4,6 +4,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -20,7 +21,7 @@ public class JobRunner extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
-        Job job = Job.getInstance(conf, "pl.michalsz.JobRunner");
+        Job job = Job.getInstance(conf, "pl.michalsz.mapreduce.JobRunner");
         job.setJarByClass(this.getClass());
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
@@ -28,8 +29,10 @@ public class JobRunner extends Configured implements Tool {
         job.setMapperClass(CollisionMapper.class);
         job.setReducerClass(CollisionReducer.class);
         job.setCombinerClass(CollisionCombiner.class);
-        job.setOutputKeyClass(CollisionData.class);
-        job.setOutputValueClass(LongWritable.class);
+        job.setMapOutputKeyClass(CollisionData.class);
+        job.setMapOutputValueClass(LongWritable.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
         return job.waitForCompletion(true) ? 0 : 1;
     }
 }

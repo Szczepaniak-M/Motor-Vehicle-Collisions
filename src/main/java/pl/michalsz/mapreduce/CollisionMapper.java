@@ -42,7 +42,9 @@ public class CollisionMapper extends Mapper<LongWritable, Text, CollisionData, L
                         case 6:
                         case 7:
                         case 8:
-                            streets.add(word);
+                            if (!word.equals("")) {
+                                streets.add(word.toUpperCase());
+                            }
                             break;
                         case 11:
                             writeCollisionToContext(context, streets, zipCode, PEDESTRIAN, INJURED, word);
@@ -74,9 +76,9 @@ public class CollisionMapper extends Mapper<LongWritable, Text, CollisionData, L
         }
     }
 
-    private void writeCollisionToContext(Context context, List<String> streets, String zipCode, String participantType, String damageType, String word) throws IOException, InterruptedException {
+    private void writeCollisionToContext(Context context, List<String> streets, String zipCode, String personType, String damageType, String word) throws IOException, InterruptedException {
         for (String street : streets) {
-            CollisionData key = new CollisionData(street, zipCode, participantType, damageType);
+            CollisionData key = new CollisionData(street, zipCode, personType, damageType);
             LongWritable value = new LongWritable(Long.parseLong(word));
             context.write(key, value);
         }

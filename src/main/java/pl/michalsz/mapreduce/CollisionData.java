@@ -12,13 +12,20 @@ public class CollisionData implements WritableComparable<CollisionData> {
 
     private final Text street;
     private final Text zipCode;
-    private final Text participantType;
+    private final Text personType;
     private final Text damageType;
 
-    public CollisionData(String street, String zipCode, String participantType, String damageType) {
+    public CollisionData() {
+        this.street = new Text();
+        this.zipCode = new Text();
+        this.personType = new Text();
+        this.damageType = new Text();
+    }
+
+    public CollisionData(String street, String zipCode, String personType, String damageType) {
         this.street = new Text(street);
         this.zipCode = new Text(zipCode);
-        this.participantType = new Text(participantType);
+        this.personType = new Text(personType);
         this.damageType = new Text(damageType);
     }
 
@@ -26,7 +33,7 @@ public class CollisionData implements WritableComparable<CollisionData> {
     public void write(DataOutput dataOutput) throws IOException {
         street.write(dataOutput);
         zipCode.write(dataOutput);
-        participantType.write(dataOutput);
+        personType.write(dataOutput);
         damageType.write(dataOutput);
     }
 
@@ -34,17 +41,13 @@ public class CollisionData implements WritableComparable<CollisionData> {
     public void readFields(DataInput dataInput) throws IOException {
         street.readFields(dataInput);
         zipCode.readFields(dataInput);
-        participantType.readFields(dataInput);
+        personType.readFields(dataInput);
         damageType.readFields(dataInput);
     }
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s",
-                street.toString(),
-                zipCode.toString(),
-                participantType.toString(),
-                damageType.toString());
+        return String.format("%s\t%s\t%s\t%s", street, zipCode, personType, damageType);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class CollisionData implements WritableComparable<CollisionData> {
             return comparison;
         }
 
-        comparison = participantType.compareTo(otherCollisionData.participantType);
+        comparison = personType.compareTo(otherCollisionData.personType);
         if (comparison != 0) {
             return comparison;
         }
@@ -74,12 +77,12 @@ public class CollisionData implements WritableComparable<CollisionData> {
         CollisionData that = (CollisionData) o;
         return Objects.equals(street, that.street)
                 && Objects.equals(zipCode, that.zipCode)
-                && Objects.equals(participantType, that.participantType)
+                && Objects.equals(personType, that.personType)
                 && Objects.equals(damageType, that.damageType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(street, zipCode, participantType, damageType);
+        return Objects.hash(street, zipCode, personType, damageType);
     }
 }
