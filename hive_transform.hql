@@ -39,13 +39,10 @@ SELECT street, person_type, killed, injured
 FROM (
     SELECT street, person_type, SUM(killed) AS killed, SUM(injured) AS injured,
         RANK () OVER (PARTITION BY person_type ORDER BY SUM(killed) + SUM(injured) DESC) AS rank_in_person_type
-    FROM (SELECT zipcode, street, person_type, 0 AS killed, count as injured
-          FROM collisions_ext
-          WHERE damage_type = 'INJURED'
-          UNION
-          SELECT zipcode, street, person_type, count AS killed, 0 AS injured
-          FROM collisions_ext
-          WHERE damage_type = 'KILLED') c
+    FROM (SELECT zipcode, street, person_type,
+                 CASE WHEN damage_type = 'INJURED' THEN count ELSE 0 END injured,
+                 CASE WHEN damage_type = 'KILLED' THEN count ELSE 0 END killed
+          FROM collisions_ext) c
     JOIN zipcode_ext z ON (z.zipcode = c.zipcode)
     WHERE z.borough = 'MANHATTAN'
     GROUP BY c.street, c.person_type
